@@ -1,0 +1,8 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "https://www.sdatennisaccess.org/*"
+  to = "https://sdatennisaccess.org/:splat"
+  status = 301
+  force = true
