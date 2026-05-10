@@ -19,6 +19,7 @@
       <a href="#models">Models</a>
       <a href="#questions">Details</a>
       <a href="#documents">Documents</a>
+      <a href="#get-involved">Get involved</a>
       <a href="#about">About</a>
     </nav>
   </header>
@@ -211,6 +212,61 @@
             <strong>Download PDF</strong>
           </a>
         </div>
+      </div>
+    </section>
+
+    <section id="get-involved" class="section contact-section">
+      <div class="section-inner contact-grid">
+        <div>
+          <p class="section-kicker">Get involved</p>
+          <h2>Help increase access to SDA tennis courts.</h2>
+          <p>
+            Sign up to receive updates, share your perspective, or help show community interest in a practical joint-use pilot.
+          </p>
+          <p>
+            Video updates are planned for Instagram, TikTok, and Facebook. The signup list will help keep interested neighbors connected as the effort develops.
+          </p>
+        </div>
+
+        <form class="contact-form" name="sda-tennis-access" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="sda-tennis-access">
+          <p class="hidden-field">
+            <label>Do not fill this out if you are human: <input name="bot-field"></label>
+          </p>
+
+          <label>
+            Name
+            <input type="text" name="name" autocomplete="name" required>
+          </label>
+
+          <label>
+            Email
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+
+          <fieldset>
+            <legend>I would like to</legend>
+            <label>
+              <input type="checkbox" name="interests" value="Receive updates">
+              Receive updates
+            </label>
+            <label>
+              <input type="checkbox" name="interests" value="Share support">
+              Share support for court access
+            </label>
+            <label>
+              <input type="checkbox" name="interests" value="Help with outreach">
+              Help with outreach
+            </label>
+          </fieldset>
+
+          <label>
+            Message
+            <textarea name="message" rows="5" placeholder="Optional"></textarea>
+          </label>
+
+          <button class="button primary" type="submit">Send</button>
+        </form>
       </div>
     </section>
 
