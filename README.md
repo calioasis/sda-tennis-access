@@ -1,6 +1,6 @@
 # SDA Tennis Access
 
-A simple static website for sharing information about possible community access to San Dieguito Academy tennis courts through a joint-use agreement.
+A simple static website for sharing information about increasing community access to San Dieguito Academy tennis courts through a joint-use agreement.
 
 ## Purpose
 
