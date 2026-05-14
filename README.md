@@ -62,6 +62,8 @@ SIGNUP_NOTIFICATION_FROM=SDA Tennis Access <updates@your-verified-domain>
 
 Resend requires the `SIGNUP_NOTIFICATION_FROM` domain to be verified for production sending. Without these variables, signups still save to the Google Sheet; only email alerts are skipped.
 
+Alternatively, use the Google Apps Script in `scripts/supporter-notifications.gs` to send notifications from the spreadsheet itself. In the campaign tracker, open Extensions > Apps Script, paste the script, run `installSupporterNotificationTrigger`, and approve permissions. The script checks the `Supporters` tab every five minutes, emails new rows, and writes `Notification Sent At`.
+
 ## Tone
 
 The site should remain collaborative and non-adversarial. It should not shame SDUHSD, SDA, the school board, or the City of Encinitas.
