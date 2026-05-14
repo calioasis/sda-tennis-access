@@ -354,7 +354,7 @@
           </p>
         </div>
 
-        <form class="contact-form" name="sda-tennis-access" method="POST" action="/thank-you.html" data-netlify="true" netlify netlify-honeypot="bot-field">
+        <form class="contact-form" id="signup-form" name="sda-tennis-access" method="POST" action="/thank-you.html" data-netlify="true" netlify netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="sda-tennis-access">
           <p class="hidden-field">
             <label>Do not fill this out if you are human: <input name="bot-field"></label>
@@ -395,6 +395,7 @@
           <p class="form-note">
             Submissions go to the SDA Tennis Access update list. You will see a confirmation page after sending.
           </p>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
@@ -420,5 +421,55 @@
   <footer class="site-footer">
     <p>SDA Tennis Access - A constructive resource for increasing community access to SDA tennis courts.</p>
   </footer>
+  <script>
+    const signupForm = document.querySelector("#signup-form");
+    const formStatus = document.querySelector("#form-status");
+
+    if (signupForm) {
+      signupForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const submitButton = signupForm.querySelector("button[type='submit']");
+        const formData = new FormData(signupForm);
+        const body = new URLSearchParams(formData);
+
+        submitButton.disabled = true;
+        formStatus.textContent = "Sending...";
+
+        try {
+          const response = await fetch("/", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body
+          });
+
+          if (response.ok) {
+            window.location.href = "/thank-you.html";
+            return;
+          }
+
+          throw new Error("Signup service unavailable");
+        } catch (error) {
+          const name = formData.get("name") || "";
+          const email = formData.get("email") || "";
+          const interests = formData.getAll("interests").join(", ");
+          const message = formData.get("message") || "";
+          const subject = "SDA Tennis Access signup";
+          const emailBody = [
+            "Name: " + name,
+            "Email: " + email,
+            "Interests: " + interests,
+            "",
+            "Message:",
+            message
+          ].join("\n");
+
+          formStatus.textContent = "Opening your email app so the message can be sent directly.";
+          window.location.href = "mailto:jeffrey.sherin@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(emailBody);
+          submitButton.disabled = false;
+        }
+      });
+    }
+  </script>
 </body>
 </html>

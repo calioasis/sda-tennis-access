@@ -641,6 +641,19 @@ p {
   font-size: 13px;
 }
 
+.form-status {
+  min-height: 20px;
+  margin: -2px 0 0;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.contact-form button:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
 .hidden-field {
   display: none;
 }
