@@ -284,21 +284,11 @@ p {
 }
 
 .map-placeholder {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  background:
-    linear-gradient(135deg, rgba(216, 242, 74, 0.38), rgba(36, 95, 135, 0.08)),
-    linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.85) 49.3%, rgba(255,255,255,0.85) 49.8%, transparent 50.1%),
-    linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.85) 49.3%, rgba(255,255,255,0.85) 49.8%, transparent 50.1%),
-    #197a63;
-}
-
-.map-placeholder span {
-  display: grid;
-  min-height: 280px;
-  place-items: center;
-  color: rgba(255, 255, 255, 0.92);
-  font-weight: 850;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  object-position: center;
 }
 
 .map-panel figcaption {
