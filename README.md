@@ -52,6 +52,16 @@ GOOGLE_SHEETS_PRIVATE_KEY=the service account private key, including BEGIN/END P
 
 Then share the Google Sheet with the service account email as an editor. The visitor-facing form stays on the website; the service account is only used by the server-side Netlify Function.
 
+Optional email notifications use Resend. Configure these additional Netlify environment variables after creating a Resend API key:
+
+```text
+RESEND_API_KEY=the Resend API key
+SIGNUP_NOTIFICATION_TO=the email address that should receive signup alerts
+SIGNUP_NOTIFICATION_FROM=SDA Tennis Access <updates@your-verified-domain>
+```
+
+Resend requires the `SIGNUP_NOTIFICATION_FROM` domain to be verified for production sending. Without these variables, signups still save to the Google Sheet; only email alerts are skipped.
+
 ## Tone
 
 The site should remain collaborative and non-adversarial. It should not shame SDUHSD, SDA, the school board, or the City of Encinitas.

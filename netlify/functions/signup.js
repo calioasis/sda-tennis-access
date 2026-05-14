@@ -1,5 +1,6 @@
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GOOGLE_SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
+const RESEND_EMAIL_URL = "https://api.resend.com/emails";
 
 const jsonResponse = (statusCode, body) => ({
   statusCode,
@@ -110,6 +111,68 @@ const cleanText = (value, maxLength = 1200) => String(value || "")
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+const escapeHtml = (value) => String(value || "")
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;");
+
+const formatPlainTextNotification = ({ name, email, neighborhood, interests, message }) => [
+  "New SDA Tennis Access signup",
+  "",
+  `Name: ${name}`,
+  `Email: ${email}`,
+  `Neighborhood: ${neighborhood || "Not provided"}`,
+  `Interests: ${interests.length ? interests.join(", ") : "Not provided"}`,
+  "",
+  "Message:",
+  message || "Not provided",
+  "",
+  "Campaign tracker:",
+  "https://docs.google.com/spreadsheets/d/1sr4U8vPgySIoRX-Xh84S0jcYNj8JoBVAIqyZm2iw1ac/edit"
+].join("\n");
+
+const formatHtmlNotification = ({ name, email, neighborhood, interests, message }) => `
+  <h2>New SDA Tennis Access signup</h2>
+  <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+  <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+  <p><strong>Neighborhood:</strong> ${escapeHtml(neighborhood || "Not provided")}</p>
+  <p><strong>Interests:</strong> ${escapeHtml(interests.length ? interests.join(", ") : "Not provided")}</p>
+  <p><strong>Message:</strong></p>
+  <p>${escapeHtml(message || "Not provided")}</p>
+  <p><a href="https://docs.google.com/spreadsheets/d/1sr4U8vPgySIoRX-Xh84S0jcYNj8JoBVAIqyZm2iw1ac/edit">Open the campaign tracker</a></p>
+`;
+
+const sendNotificationEmail = async ({ name, email, neighborhood, interests, message }) => {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.SIGNUP_NOTIFICATION_TO;
+  const from = process.env.SIGNUP_NOTIFICATION_FROM;
+
+  if (!apiKey || !to || !from) {
+    return;
+  }
+
+  const response = await fetch(RESEND_EMAIL_URL, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from,
+      to,
+      reply_to: email,
+      subject: `New SDA Tennis Access signup: ${name}`,
+      text: formatPlainTextNotification({ name, email, neighborhood, interests, message }),
+      html: formatHtmlNotification({ name, email, neighborhood, interests, message })
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Notification email failed: ${response.status}`);
+  }
+};
+
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return jsonResponse(405, { error: "Method not allowed" });
@@ -169,6 +232,12 @@ exports.handler = async (event) => {
 
     if (!appendResponse.ok) {
       throw new Error(`Google Sheets append failed: ${appendResponse.status}`);
+    }
+
+    try {
+      await sendNotificationEmail({ name, email, neighborhood, interests, message });
+    } catch (notificationError) {
+      console.error(notificationError);
     }
 
     return jsonResponse(200, { ok: true });
