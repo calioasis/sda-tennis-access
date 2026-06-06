@@ -478,16 +478,8 @@
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body
           });
-          const result = await response.json().catch(() => ({}));
 
           if (response.ok) {
-            if (result.notificationSent === false) {
-              formStatus.textContent = "Your signup was saved. Opening your email app so the message can also be sent directly.";
-              openEmailFallback(formData);
-              submitButton.disabled = false;
-              return;
-            }
-
             window.location.href = "/thank-you.html";
             return;
           }
