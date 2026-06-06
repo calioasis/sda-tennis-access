@@ -410,7 +410,7 @@
 
           <button class="button primary" type="submit">Send</button>
           <p class="form-note">
-            Submissions go to the SDA Tennis Access update list. You will see a confirmation page after sending.
+            Please reach out directly to <a href="mailto:jeffrey.sherin@gmail.com">jeffrey.sherin@gmail.com</a> for additional information.
           </p>
           <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
         </form>
@@ -443,6 +443,25 @@
     const formStatus = document.querySelector("#form-status");
 
     if (signupForm) {
+      const openEmailFallback = (formData) => {
+        const name = formData.get("name") || "";
+        const email = formData.get("email") || "";
+        const interests = formData.getAll("interests").join(", ");
+        const message = formData.get("message") || "";
+        const subject = "SDA Tennis Access signup";
+        const emailBody = [
+          "Name: " + name,
+          "Email: " + email,
+          "Neighborhood: " + (formData.get("neighborhood") || ""),
+          "Interests: " + interests,
+          "",
+          "Message:",
+          message
+        ].join("\n");
+
+        window.location.href = "mailto:jeffrey.sherin@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(emailBody);
+      };
+
       signupForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
@@ -459,31 +478,24 @@
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body
           });
+          const result = await response.json().catch(() => ({}));
 
           if (response.ok) {
+            if (result.notificationSent === false) {
+              formStatus.textContent = "Your signup was saved. Opening your email app so the message can also be sent directly.";
+              openEmailFallback(formData);
+              submitButton.disabled = false;
+              return;
+            }
+
             window.location.href = "/thank-you.html";
             return;
           }
 
           throw new Error("Signup service unavailable");
         } catch (error) {
-          const name = formData.get("name") || "";
-          const email = formData.get("email") || "";
-          const interests = formData.getAll("interests").join(", ");
-          const message = formData.get("message") || "";
-          const subject = "SDA Tennis Access signup";
-          const emailBody = [
-            "Name: " + name,
-            "Email: " + email,
-            "Neighborhood: " + (formData.get("neighborhood") || ""),
-            "Interests: " + interests,
-            "",
-            "Message:",
-            message
-          ].join("\n");
-
           formStatus.textContent = "Opening your email app so the message can be sent directly.";
-          window.location.href = "mailto:jeffrey.sherin@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(emailBody);
+          openEmailFallback(formData);
           submitButton.disabled = false;
         }
       });

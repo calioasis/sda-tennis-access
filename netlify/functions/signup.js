@@ -149,7 +149,7 @@ const sendNotificationEmail = async ({ name, email, neighborhood, interests, mes
   const from = process.env.SIGNUP_NOTIFICATION_FROM;
 
   if (!apiKey || !to || !from) {
-    return;
+    return { sent: false, reason: "not_configured" };
   }
 
   const response = await fetch(RESEND_EMAIL_URL, {
@@ -171,6 +171,8 @@ const sendNotificationEmail = async ({ name, email, neighborhood, interests, mes
   if (!response.ok) {
     throw new Error(`Notification email failed: ${response.status}`);
   }
+
+  return { sent: true };
 };
 
 exports.handler = async (event) => {
@@ -234,13 +236,16 @@ exports.handler = async (event) => {
       throw new Error(`Google Sheets append failed: ${appendResponse.status}`);
     }
 
+    let notification = { sent: false, reason: "not_configured" };
+
     try {
-      await sendNotificationEmail({ name, email, neighborhood, interests, message });
+      notification = await sendNotificationEmail({ name, email, neighborhood, interests, message });
     } catch (notificationError) {
       console.error(notificationError);
+      notification = { sent: false, reason: "failed" };
     }
 
-    return jsonResponse(200, { ok: true });
+    return jsonResponse(200, { ok: true, notificationSent: notification.sent });
   } catch (error) {
     console.error(error);
     return jsonResponse(500, { error: "Signup could not be saved" });
