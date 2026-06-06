@@ -208,11 +208,21 @@ exports.handler = async (event) => {
       return jsonResponse(400, { error: "Name and a valid email are required" });
     }
 
+    let notification = { sent: false, reason: "not_configured" };
+
+    try {
+      notification = await sendNotificationEmail({ name, email, neighborhood, interests, message });
+    } catch (notificationError) {
+      console.error(notificationError);
+      notification = { sent: false, reason: notificationError.message || "failed" };
+    }
+
+    const submittedAt = new Date().toISOString();
     const accessToken = await getAccessToken({ clientEmail, privateKey });
-    const range = encodeURIComponent(`${sheetName}!A:I`);
+    const range = encodeURIComponent(`${sheetName}!A:N`);
     const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
     const values = [[
-      new Date().toISOString(),
+      submittedAt,
       name,
       email,
       neighborhood,
@@ -220,7 +230,12 @@ exports.handler = async (event) => {
       message,
       "New",
       "Website",
-      event.headers.referer || "https://sdatennisaccess.org/"
+      event.headers.referer || "https://sdatennisaccess.org/",
+      "",
+      "",
+      "",
+      notification.sent ? submittedAt : "",
+      notification.sent ? "" : notification.reason
     ]];
 
     const appendResponse = await fetch(appendUrl, {
@@ -234,15 +249,6 @@ exports.handler = async (event) => {
 
     if (!appendResponse.ok) {
       throw new Error(`Google Sheets append failed: ${appendResponse.status}`);
-    }
-
-    let notification = { sent: false, reason: "not_configured" };
-
-    try {
-      notification = await sendNotificationEmail({ name, email, neighborhood, interests, message });
-    } catch (notificationError) {
-      console.error(notificationError);
-      notification = { sent: false, reason: "failed" };
     }
 
     return jsonResponse(200, { ok: true, notificationSent: notification.sent });

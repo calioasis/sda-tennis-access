@@ -38,7 +38,7 @@ The `Get involved` form posts to a Netlify Function at `/.netlify/functions/sign
 Create a tab named `Supporters` in the target spreadsheet with these headers:
 
 ```text
-Timestamp | Name | Email | Neighborhood | Interests | Message | Follow-up Status | Source | Referrer
+Timestamp | Name | Email | Neighborhood | Interests | Message | Follow-up Status | Source | Referrer | Notes | Last Contacted | Owner | Notification Sent At | Notification Error
 ```
 
 Configure these Netlify environment variables:
@@ -61,6 +61,8 @@ SIGNUP_NOTIFICATION_FROM=SDA Tennis Access <updates@your-verified-domain>
 ```
 
 Resend requires the `SIGNUP_NOTIFICATION_FROM` domain to be verified for production sending. Without these variables, signups still save to the Google Sheet; only email alerts are skipped.
+
+Each saved signup records notification delivery status in the spreadsheet. `Notification Sent At` is filled when the Netlify Function sends an email successfully. `Notification Error` is filled when email notification is not configured or fails.
 
 Alternatively, use the Google Apps Script in `scripts/supporter-notifications.gs` to send notifications from the spreadsheet itself. In the campaign tracker, open Extensions > Apps Script, paste the script, run `installSupporterNotificationTrigger`, and approve permissions. The script checks the `Supporters` tab every five minutes, emails new rows, and writes `Notification Sent At`.
 
