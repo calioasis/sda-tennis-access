@@ -196,6 +196,9 @@
           <p>
             Other districts already allow access. Formal joint-use agreements assign responsibility for the operational details that matter.
           </p>
+          <p>
+            This effort offers solutions, not problems: school priority, public hours, gates, maintenance, and liability all belong in a clear operating plan.
+          </p>
         </div>
         <ul class="pill-list">
           <li>School priority and blackout periods</li>
@@ -320,7 +323,7 @@
           <details>
             <summary>Why not just use the current rental process?</summary>
             <p>
-              A reservation-only model with high fees, insurance requirements, or custodial charges does not function as meaningful public access for ordinary residents. The goal is a practical public recreation model, not a system designed mainly for organizations, camps, or formal rentals.
+              The current rental process is not realistic public access for ordinary residents. Do you have a $1 million liability policy ready for a casual tennis match? Most people do not. A model built around high fees, insurance requirements, and custodial charges mainly works for organizations, camps, and formal rentals. The goal is practical public recreation access.
             </p>
           </details>
 
@@ -401,6 +404,23 @@
           <p>
             Video updates are planned for Instagram, TikTok, and Facebook. The signup list will help keep interested neighbors connected as the effort develops.
           </p>
+          <div class="social-links" aria-label="SDA Tennis Access social links">
+            <a href="https://www.instagram.com/sdatennisaccess" target="_blank" rel="noopener noreferrer" aria-label="Follow SDA Tennis Access on Instagram">
+              <svg class="social-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
+                <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+                <circle cx="12" cy="12" r="4"></circle>
+                <circle cx="17.5" cy="6.5" r="1.2"></circle>
+              </svg>
+              <span>Instagram</span>
+            </a>
+            <a href="https://www.youtube.com/@sdatennisaccess" target="_blank" rel="noopener noreferrer" aria-label="Follow SDA Tennis Access on YouTube">
+              <svg class="social-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
+                <path d="M21 12s0-3.4-.4-5c-.2-.9-.9-1.6-1.8-1.8C17.2 4.8 12 4.8 12 4.8s-5.2 0-6.8.4c-.9.2-1.6.9-1.8 1.8C3 8.6 3 12 3 12s0 3.4.4 5c.2.9.9 1.6 1.8 1.8 1.6.4 6.8.4 6.8.4s5.2 0 6.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-5 .4-5Z"></path>
+                <path d="m10 15 5-3-5-3v6Z" fill="currentColor" stroke="none"></path>
+              </svg>
+              <span>YouTube</span>
+            </a>
+          </div>
         </div>
 
         <form class="contact-form" id="signup-form" name="sda-tennis-access" method="POST" action="/thank-you.html" data-netlify="true" netlify netlify-honeypot="bot-field">
@@ -417,11 +437,6 @@
           <label>
             Email
             <input type="email" name="email" autocomplete="email" required>
-          </label>
-
-          <label>
-            Neighborhood
-            <input type="text" name="neighborhood" autocomplete="address-level3" placeholder="Optional">
           </label>
 
           <fieldset>
@@ -474,6 +489,23 @@
 
   <footer class="site-footer">
     <p>SDA Tennis Access - A constructive resource for increasing community access to SDA tennis courts.</p>
+    <div class="social-links footer-social" aria-label="SDA Tennis Access social links">
+      <a href="https://www.instagram.com/sdatennisaccess" target="_blank" rel="noopener noreferrer" aria-label="Follow SDA Tennis Access on Instagram">
+        <svg class="social-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
+          <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+          <circle cx="12" cy="12" r="4"></circle>
+          <circle cx="17.5" cy="6.5" r="1.2"></circle>
+        </svg>
+        <span>Instagram</span>
+      </a>
+      <a href="https://www.youtube.com/@sdatennisaccess" target="_blank" rel="noopener noreferrer" aria-label="Follow SDA Tennis Access on YouTube">
+        <svg class="social-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" focusable="false">
+          <path d="M21 12s0-3.4-.4-5c-.2-.9-.9-1.6-1.8-1.8C17.2 4.8 12 4.8 12 4.8s-5.2 0-6.8.4c-.9.2-1.6.9-1.8 1.8C3 8.6 3 12 3 12s0 3.4.4 5c.2.9.9 1.6 1.8 1.8 1.6.4 6.8.4 6.8.4s5.2 0 6.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-5 .4-5Z"></path>
+          <path d="m10 15 5-3-5-3v6Z" fill="currentColor" stroke="none"></path>
+        </svg>
+        <span>YouTube</span>
+      </a>
+    </div>
   </footer>
   <script>
     const signupForm = document.querySelector("#signup-form");
@@ -489,7 +521,6 @@
         const emailBody = [
           "Name: " + name,
           "Email: " + email,
-          "Neighborhood: " + (formData.get("neighborhood") || ""),
           "Interests: " + interests,
           "",
           "Message:",
