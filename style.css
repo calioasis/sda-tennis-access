@@ -95,7 +95,7 @@ object {
 .hero {
   position: relative;
   overflow: hidden;
-  min-height: calc(100vh - 61px);
+  min-height: min(720px, calc(100vh - 61px));
   background:
     linear-gradient(90deg, rgba(17, 83, 66, 0.92), rgba(25, 122, 99, 0.78)),
     var(--court);
@@ -116,12 +116,12 @@ object {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  gap: clamp(28px, 6vw, 72px);
-  align-items: end;
+  gap: clamp(28px, 5vw, 56px);
+  align-items: center;
   width: min(1160px, calc(100% - 36px));
-  min-height: calc(100vh - 61px);
+  min-height: min(720px, calc(100vh - 61px));
   margin: 0 auto;
-  padding: clamp(72px, 12vw, 140px) 0 clamp(44px, 7vw, 74px);
+  padding: clamp(56px, 8vw, 92px) 0;
 }
 
 .hero-copy {
