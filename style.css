@@ -315,6 +315,72 @@ p {
   border: 0;
 }
 
+.access-log-section {
+  background: var(--paper);
+}
+
+.access-log-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1fr);
+  gap: clamp(28px, 6vw, 72px);
+  align-items: start;
+}
+
+.latest-update {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  gap: 22px;
+  align-items: start;
+  padding: clamp(20px, 3vw, 30px);
+  border: 1px solid var(--line);
+  border-left: 8px solid var(--yellow);
+  border-radius: var(--radius);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.latest-update-copy {
+  min-width: 0;
+}
+
+.update-label {
+  margin: 0 0 8px;
+  color: var(--clay);
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.latest-update time {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.latest-update h3 {
+  max-width: 520px;
+  margin-bottom: 14px;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.08;
+}
+
+.latest-update p:not(.update-label) {
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.latest-update .update-video {
+  width: min(100%, 220px);
+  max-width: 220px;
+  justify-self: end;
+  box-shadow: none;
+}
+
 .intro-section {
   background: var(--paper);
 }
@@ -808,6 +874,7 @@ p {
   .hero-inner,
   .split,
   .accessibility-grid,
+  .access-log-grid,
   .site-grid,
   .model-row,
   .detail-grid,
@@ -823,6 +890,14 @@ p {
 
   .map-panel {
     transform: none;
+  }
+
+  .latest-update {
+    grid-template-columns: 1fr;
+  }
+
+  .latest-update .update-video {
+    justify-self: start;
   }
 }
 
@@ -852,6 +927,10 @@ p {
   .shorts-grid {
     grid-template-columns: 1fr;
     max-width: 320px;
+  }
+
+  .latest-update {
+    padding: 18px;
   }
 
   .contact-form button {
