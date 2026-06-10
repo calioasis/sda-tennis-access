@@ -326,6 +326,11 @@ p {
   align-items: start;
 }
 
+.update-stack {
+  display: grid;
+  gap: 18px;
+}
+
 .latest-update {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
@@ -379,6 +384,52 @@ p {
   max-width: 220px;
   justify-self: end;
   box-shadow: none;
+}
+
+.update-history {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.update-history .update-label {
+  margin-bottom: 10px;
+}
+
+.update-history ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.update-history li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.update-history li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.update-history time {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.update-history a {
+  color: var(--blue);
+  font-weight: 850;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .intro-section {
