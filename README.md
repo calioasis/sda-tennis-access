@@ -38,7 +38,7 @@ The `Get involved` form posts to a Netlify Function at `/.netlify/functions/sign
 Create a tab named `Supporters` in the target spreadsheet with these headers:
 
 ```text
-Timestamp | Name | Email | Neighborhood | Interests | Message | Follow-up Status | Source | Referrer | Notes | Last Contacted | Owner | Notification Sent At | Notification Error
+Timestamp | Name | Email | Phone | Neighborhood | Interests | Message | Follow-up Status | Source | Referrer | Notes | Last Contacted | Owner | Notification Sent At | Notification Error
 ```
 
 Configure these Netlify environment variables:
@@ -65,6 +65,17 @@ Resend requires the `SIGNUP_NOTIFICATION_FROM` domain to be verified for product
 Each saved signup records notification delivery status in the spreadsheet. `Notification Sent At` is filled when the Netlify Function sends an email successfully. `Notification Error` is filled when email notification is not configured or fails.
 
 Alternatively, use the Google Apps Script in `scripts/supporter-notifications.gs` to send notifications from the spreadsheet itself. In the campaign tracker, open Extensions > Apps Script, paste the script, run `installSupporterNotificationTrigger`, and approve permissions. The script checks the `Supporters` tab every five minutes, emails new rows, and writes `Notification Sent At`.
+
+Optional MailerLite welcome emails can be triggered from the same website signup. Create a MailerLite group for website signups, then create a MailerLite automation with the trigger `Joins a group` and the action `Send email`.
+
+Configure these additional Netlify environment variables:
+
+```text
+MAILERLITE_API_KEY=the MailerLite API token
+MAILERLITE_GROUP_ID=the MailerLite group id for website signups
+```
+
+The Netlify Function adds or updates the subscriber in MailerLite and adds them to that group. MailerLite then sends the welcome email. If MailerLite is not configured or temporarily fails, the signup still saves to Google Sheets and the MailerLite status is written to the spreadsheet `Notes` column.
 
 ## Tone
 

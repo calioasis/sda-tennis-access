@@ -26,7 +26,7 @@
     gtag('js', new Date());
     gtag('config', 'G-CEEJ8RYQ07');
   </script>
-  <link rel="stylesheet" href="style.css?v=20260611-access-log">
+  <link rel="stylesheet" href="style.css?v=20260709-phone">
 </head>
 <body>
   <header class="site-header">
@@ -113,10 +113,10 @@
     <section id="access-log" class="section access-log-section">
       <div class="section-inner access-log-grid">
         <div class="section-copy">
-          <p class="section-kicker">Access log</p>
-          <h2>Ongoing notes from SDA’s locked courts.</h2>
+          <p class="section-kicker">Updates</p>
+          <h2>Progress notes from the campaign and the courts.</h2>
           <p>
-            The Access Log documents a repeated missed opportunity: beautiful courts sitting empty when a school-first agreement could allow residents to play.
+            Campaign updates track the organizing work. The Access Log keeps showing the same simple reality: beautiful courts sitting empty when a school-first agreement could allow residents to play.
           </p>
           <p>
             Let’s work together with the City of Encinitas and SDUHSD to open these courts up! The agreement models already exist. Now we need enough community support to help make it happen.
@@ -124,9 +124,32 @@
         </div>
 
         <div class="update-stack">
+          <article class="campaign-update-card" aria-labelledby="campaign-update-title">
+            <p class="update-label">Campaign update</p>
+            <time datetime="2026-07-09">July 9, 2026</time>
+            <h3 id="campaign-update-title">Now we need the city side.</h3>
+            <p>
+              After speaking at the June school board meeting, the superintendent is now on board and waiting to hear what we can figure out with the city.
+            </p>
+            <p>
+              Encinitas Parks and Recreation meets August 18, and City Council meets August 19. Those meetings should get the ball rolling with the city.
+            </p>
+            <a class="text-link" href="updates/2026-07-09.html">Read the July 9 update</a>
+          </article>
+
+          <div class="update-history" aria-label="Earlier campaign updates">
+            <p class="update-label">Earlier campaign updates</p>
+            <ul>
+              <li>
+                <time datetime="2026-06-15">June 15, 2026</time>
+                <a href="updates/2026-06-15.html">Positive momentum is building</a>
+              </li>
+            </ul>
+          </div>
+
           <article class="latest-update" aria-labelledby="latest-update-title">
             <div class="latest-update-copy">
-              <p class="update-label">Latest update</p>
+              <p class="update-label">Latest court video</p>
               <time datetime="2026-06-11">June 11, 2026</time>
               <h3 id="latest-update-title">The courts are still locked. The solution is still right there.</h3>
               <p>
@@ -509,6 +532,11 @@
             <input type="email" name="email" autocomplete="email" required>
           </label>
 
+          <label>
+            Phone
+            <input type="tel" name="phone" autocomplete="tel" placeholder="Optional">
+          </label>
+
           <fieldset>
             <legend>I would like to</legend>
             <label>
@@ -522,6 +550,10 @@
             <label>
               <input type="checkbox" name="interests" value="Help with outreach">
               Help with outreach
+            </label>
+            <label>
+              <input type="checkbox" name="interests" value="Receive text messages">
+              Receive text messages
             </label>
           </fieldset>
 
@@ -585,12 +617,14 @@
       const openEmailFallback = (formData) => {
         const name = formData.get("name") || "";
         const email = formData.get("email") || "";
+        const phone = formData.get("phone") || "";
         const interests = formData.getAll("interests").join(", ");
         const message = formData.get("message") || "";
         const subject = "SDA Tennis Access signup";
         const emailBody = [
           "Name: " + name,
           "Email: " + email,
+          "Phone: " + phone,
           "Interests: " + interests,
           "",
           "Message:",

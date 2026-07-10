@@ -15,7 +15,7 @@ function notifyNewSupporters() {
     return;
   }
 
-  const values = sheet.getRange(2, 1, lastRow - 1, 14).getValues();
+  const values = sheet.getRange(2, 1, lastRow - 1, 15).getValues();
 
   values.forEach((row, index) => {
     const rowNumber = index + 2;
@@ -23,6 +23,7 @@ function notifyNewSupporters() {
       timestamp,
       name,
       email,
+      phone,
       neighborhood,
       interests,
       message,
@@ -46,6 +47,7 @@ function notifyNewSupporters() {
         "",
         `Name: ${name || "Not provided"}`,
         `Email: ${email || "Not provided"}`,
+        `Phone: ${phone || "Not provided"}`,
         `Neighborhood: ${neighborhood || "Not provided"}`,
         `Interests: ${interests || "Not provided"}`,
         `Follow-up Status: ${followUpStatus || "New"}`,
@@ -75,10 +77,10 @@ function notifyNewSupporters() {
         body
       });
 
-      sheet.getRange(rowNumber, 13).setValue(new Date());
-      sheet.getRange(rowNumber, 14).clearContent();
+      sheet.getRange(rowNumber, 14).setValue(new Date());
+      sheet.getRange(rowNumber, 15).clearContent();
     } catch (error) {
-      sheet.getRange(rowNumber, 14).setValue(error.message);
+      sheet.getRange(rowNumber, 15).setValue(error.message);
     }
   });
 }

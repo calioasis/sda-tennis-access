@@ -1,6 +1,7 @@
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GOOGLE_SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 const RESEND_EMAIL_URL = "https://api.resend.com/emails";
+const MAILERLITE_SUBSCRIBERS_URL = "https://connect.mailerlite.com/api/subscribers";
 
 const jsonResponse = (statusCode, body) => ({
   statusCode,
@@ -97,6 +98,7 @@ const parseFormBody = (event) => {
   return {
     name: params.get("name") || "",
     email: params.get("email") || "",
+    phone: params.get("phone") || "",
     neighborhood: params.get("neighborhood") || "",
     message: params.get("message") || "",
     botField: params.get("bot-field") || "",
@@ -117,11 +119,12 @@ const escapeHtml = (value) => String(value || "")
   .replace(/>/g, "&gt;")
   .replace(/"/g, "&quot;");
 
-const formatPlainTextNotification = ({ name, email, neighborhood, interests, message }) => [
+const formatPlainTextNotification = ({ name, email, phone, neighborhood, interests, message }) => [
   "New SDA Tennis Access signup",
   "",
   `Name: ${name}`,
   `Email: ${email}`,
+  `Phone: ${phone || "Not provided"}`,
   `Neighborhood: ${neighborhood || "Not provided"}`,
   `Interests: ${interests.length ? interests.join(", ") : "Not provided"}`,
   "",
@@ -132,10 +135,11 @@ const formatPlainTextNotification = ({ name, email, neighborhood, interests, mes
   "https://docs.google.com/spreadsheets/d/1sr4U8vPgySIoRX-Xh84S0jcYNj8JoBVAIqyZm2iw1ac/edit"
 ].join("\n");
 
-const formatHtmlNotification = ({ name, email, neighborhood, interests, message }) => `
+const formatHtmlNotification = ({ name, email, phone, neighborhood, interests, message }) => `
   <h2>New SDA Tennis Access signup</h2>
   <p><strong>Name:</strong> ${escapeHtml(name)}</p>
   <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+  <p><strong>Phone:</strong> ${escapeHtml(phone || "Not provided")}</p>
   <p><strong>Neighborhood:</strong> ${escapeHtml(neighborhood || "Not provided")}</p>
   <p><strong>Interests:</strong> ${escapeHtml(interests.length ? interests.join(", ") : "Not provided")}</p>
   <p><strong>Message:</strong></p>
@@ -143,7 +147,7 @@ const formatHtmlNotification = ({ name, email, neighborhood, interests, message 
   <p><a href="https://docs.google.com/spreadsheets/d/1sr4U8vPgySIoRX-Xh84S0jcYNj8JoBVAIqyZm2iw1ac/edit">Open the campaign tracker</a></p>
 `;
 
-const sendNotificationEmail = async ({ name, email, neighborhood, interests, message }) => {
+const sendNotificationEmail = async ({ name, email, phone, neighborhood, interests, message }) => {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.SIGNUP_NOTIFICATION_TO;
   const from = process.env.SIGNUP_NOTIFICATION_FROM;
@@ -163,8 +167,8 @@ const sendNotificationEmail = async ({ name, email, neighborhood, interests, mes
       to,
       reply_to: email,
       subject: `New SDA Tennis Access signup: ${name}`,
-      text: formatPlainTextNotification({ name, email, neighborhood, interests, message }),
-      html: formatHtmlNotification({ name, email, neighborhood, interests, message })
+      text: formatPlainTextNotification({ name, email, phone, neighborhood, interests, message }),
+      html: formatHtmlNotification({ name, email, phone, neighborhood, interests, message })
     })
   });
 
@@ -173,6 +177,38 @@ const sendNotificationEmail = async ({ name, email, neighborhood, interests, mes
   }
 
   return { sent: true };
+};
+
+const syncMailerLiteSubscriber = async ({ name, email }) => {
+  const apiKey = process.env.MAILERLITE_API_KEY;
+  const groupId = process.env.MAILERLITE_GROUP_ID;
+
+  if (!apiKey || !groupId) {
+    return { synced: false, reason: "not_configured" };
+  }
+
+  const response = await fetch(MAILERLITE_SUBSCRIBERS_URL, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      email,
+      fields: {
+        name
+      },
+      groups: [groupId]
+    })
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`MailerLite sync failed: ${response.status} ${details}`.slice(0, 300));
+  }
+
+  return { synced: true };
 };
 
 exports.handler = async (event) => {
@@ -198,6 +234,7 @@ exports.handler = async (event) => {
 
     const name = cleanText(form.name, 160);
     const email = cleanText(form.email, 240);
+    const phone = cleanText(form.phone, 80);
     const neighborhood = cleanText(form.neighborhood, 160);
     const message = cleanText(form.message, 3000);
     const interests = Array.isArray(form.interests)
@@ -209,29 +246,41 @@ exports.handler = async (event) => {
     }
 
     let notification = { sent: false, reason: "not_configured" };
+    let mailerLite = { synced: false, reason: "not_configured" };
 
     try {
-      notification = await sendNotificationEmail({ name, email, neighborhood, interests, message });
+      notification = await sendNotificationEmail({ name, email, phone, neighborhood, interests, message });
     } catch (notificationError) {
       console.error(notificationError);
       notification = { sent: false, reason: notificationError.message || "failed" };
     }
 
+    try {
+      mailerLite = await syncMailerLiteSubscriber({ name, email });
+    } catch (mailerLiteError) {
+      console.error(mailerLiteError);
+      mailerLite = { synced: false, reason: mailerLiteError.message || "failed" };
+    }
+
     const submittedAt = new Date().toISOString();
+    const notes = mailerLite.synced
+      ? `MailerLite synced at ${submittedAt}`
+      : `MailerLite ${mailerLite.reason}`;
     const accessToken = await getAccessToken({ clientEmail, privateKey });
-    const range = encodeURIComponent(`${sheetName}!A:N`);
+    const range = encodeURIComponent(`${sheetName}!A:O`);
     const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
     const values = [[
       submittedAt,
       name,
       email,
+      phone,
       neighborhood,
       interests.join(", "),
       message,
       "New",
       "Website",
       event.headers.referer || "https://sdatennisaccess.org/",
-      "",
+      notes,
       "",
       "",
       notification.sent ? submittedAt : "",
@@ -251,7 +300,11 @@ exports.handler = async (event) => {
       throw new Error(`Google Sheets append failed: ${appendResponse.status}`);
     }
 
-    return jsonResponse(200, { ok: true, notificationSent: notification.sent });
+    return jsonResponse(200, {
+      ok: true,
+      notificationSent: notification.sent,
+      mailerLiteSynced: mailerLite.synced
+    });
   } catch (error) {
     console.error(error);
     return jsonResponse(500, { error: "Signup could not be saved" });
